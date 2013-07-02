@@ -128,6 +128,7 @@ Capybara.javascript_driver = :sauce
 
 Sauce.config do |c|
   c[:browsers] = [['Mac', 'Chrome', '']]
+  c[:start_tunnel] = false
 end
 ```
 
@@ -144,13 +145,15 @@ Capybara.javascript_driver = :sauce
 
 Sauce.config do |c|
   c[:browsers] = [['Mac', 'Chrome', '']]
+  c[:start_tunnel] = false
 end
 ```
 **Let's break this down**
 
-* Because of file loading issues, you *must* to require `sauce/cucumber` after `cucumber/rails`.
-* `Capybara.javascript_driver = :sauce` tells Capybara that any tests that need to be run with `javascript` should be handled by sauce.  What the `sauce-cucumber` gem does is make any test tagged with `@selenium` run automatically on the Sauce OnDemand platform.
+* Because of file loading issues, you *must* to require `sauce/cucumber` after `cucumber/rails`
+* `Capybara.javascript_driver = :sauce` tells Capybara that any tests that need to be run with `javascript` should be handled by sauce.  What the `sauce-cucumber` gem does is make any test tagged with `@selenium` run automatically on the Sauce OnDemand platform
 * The `Sauce.config` block tells the `sauce-cucumber` gem which platform (Mac), browser (Chrome) and browser version ("") to execute your test on.  Chrome doesn't have versions so you just put an empty string.  And yes, it has to be in an array of arrays!
+* The `:start_tunnel` line in the `Sauce.config` block disables Sauce Connect, more on that later
 
 We now need to add our credentials so SauceLabs knows who we are.  Inside of our `config` directory create a new `.yml` file called `ondemand.yml`.  The sauce gem looks for this file.  Add the following:
 
@@ -322,7 +325,7 @@ end
 **Breakdown**
 * `Capybara.server_port` is needed because Capybara runs its server on a random port, whereas Sauce Connect is expecting a port from a specific range.  Port 80 is from that range.  The full range can be found in the *Accessing applications on localhost* section of the [Sauce Connect documentation](https://saucelabs.com/docs/connect).
 
-* `c[:start_tunnel] = true` Tells sauce that it should spin up the Sauce Connect tunnel before the test is run.
+* `c[:start_tunnel] = true` Tells sauce that it should spin up the Sauce Connect tunnel before the test is run.  This defaults to true, but it's explicit here, for clarity.
 
 Time to write a test.  At this point I cannot give you a sample because each of our applications will be different.  But, you should create a new `.feature` file within the `features/test` directory.  A quick smoketest could be to hit your landing page and click on some button, like `login`.  Remember to tag the test with `@selenium` so that the `sauce-connect gem` will pick it up.
 
