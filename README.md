@@ -174,6 +174,15 @@ Feature: Testing different webpages
 
 Now, run `cucumber` from your command line and you should be running the test on Sauce Labs.
 
+##Phase 4: Parallelize the Test
+
+(**Editor's Note:  Michael put a HUGE amount of effort into a tutorial for parallelization of tests, which we then went and sniped by building it into the gem itself.  We've replaced his example here with details from the gem, but will be publishing his example at a later date for people who want to roll their own parallelization**)
+
+Time for the fun part.  Before we code it, let's take a step back and outline the design we will use to achieve parallelization.  Sauce Labs provides us with a set number of concurrent VMs.  We want to take advantage of *all* of them at once, without exceeding our limit (And thus making our tests wait and potentially fail).  We also want to run against more then one os, browser and browser version at once.
+
+So, we should probably use a rake task that will loop through all of the os/browser/version configs we want, create a test run for each, and run the processes in the background.
+
+Thankfully, the `sauce` gem (required by the `sauce-cucumber` gem) already includes a rake task and all the logic to run with maximum parallelization. 
 ##Phase 4: Parallelize the Test (part 1)
 
 Time for the fun part.  Before we code it, let's take a step back and outline the design we will be using to achieve parallelization.  Every time we run `cucumber` it loads the `env.rb` file and then runs all the tests we tell it to run.  Our `env.rb` file contains the os, browser, and brower version we want sauce to run.  So, we'll create our own rake task that will loop thru all of the os/browser/version configs we want, set that inside of the `env.rb` file and then run the process in background.  Essentailly, each config we have represents its own thread.  To accomplish this, we'll use `Thor` to dynamically change our `env.rb` file for us.
