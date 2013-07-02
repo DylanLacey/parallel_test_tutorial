@@ -2,11 +2,11 @@
 ###Using Saucelabs, Cucumber, and Capybara
 
 ##Goal
-In this tutorial we will create a rails app from scratch that contain `cucumber .feature` files that we can run in parallel against 6 different browsers.  Cross browser testing is super important because each browser has its own implementation on how it handles rendering the `DOM` and as developers we want to ensure that our product works with all the browsers our customers are using.  
+In this tutorial we will create a rails app from scratch, containing `cucumber .feature` files that we can run in parallel against 6 different browsers.  Cross browser testing is super important because each browser has its own implementation on how it handles rendering the `DOM` and as developers, we want to ensure that our product works with all the browsers our customers are using.  
 
-The type of tests we will be covering today are called integration tests.  These tests are fully headed - they simulate the actions of real users by automating the actions of the browser.  Since many sites today use `javascript` we'll be using the `Selenium Webdriver` to handle these interactions.  Because many large scale apps today follow a `Service Oriented Architecture`,  we'll be building a rails app that solely houses `cucumber .feature` files and their corresponding `step definitions`.  We can then run them remotely against other applications.
+The type of tests we will be covering today are called integration tests.  These tests are fully headed - they simulate the actions of real users by automating the actions of the browser.  Since many sites today use `javascript` we'll use the `Selenium Webdriver` to handle these interactions.  Because many large scale apps today follow a `Service Oriented Architecture`,  we'll be building a rails app that solely houses `cucumber .feature` files and their corresponding `step definitions`.  We can then run them remotely against other applications.
 
-To implement cross browser testing we'll need to spin up multiple virtual machines where each is configured with the correct OS and browser.  Such a task is outside the range of this tutorial.  Instead, we'll be leveraging the awesome tools provided by SauceLabs.  They have already handled the hard part of provisioning VMs so all we need to do is write our tests and run them using Sauce Labs.  Moving forward in this tutorial, you'll need a Sauce Labs account, which you can sign up for free [here](http://saucelabs.com/ "saucelabs").
+To implement cross browser testing we'll need to spin up multiple virtual machines where each is configured with the correct OS and browser.  Such a task is outside the range of this tutorial (sorry!).  Instead, we'll be leveraging the awesome tools provided by Sauce Labs.  They've already handled the hard part of provisioning VMs (Virtual Machines) so all we need to do is write our tests and run them using Sauce Labs.  Moving forward in this tutorial, you'll need a Sauce Labs account, which you can sign up for free [here](http://saucelabs.com/ "saucelabs").
 
 ##Phase 1: Getting Cucumber Up and Running
 Create a new rails app called super_test
@@ -27,7 +27,7 @@ rails generate cucumber:install
 
 It should have generated a `features` folder and created the `cucumber command`
 
-To make sure we're not crazy let's run `cucumber`. You should get the follow output:
+To make sure we're not crazy let's run `cucumber`. We should get the follow output:
 ```
 Using the default profile...
 0 scenarios
@@ -37,7 +37,7 @@ Using the default profile...
 Great!  We now have `Cucumber` wired up correctly.
 
 ##Phase 2: Adding Capyabra
-Capybara is a great tool that gives us a nice DSL for interacting with DOM elements i.e finding, selecting, clicking, and filling in forms...you know, all things your users are going to be doing.  Luckily for us, the `cucumber-rails` gem that we installed already has `Capybara` built in.  First, let's get some configuration out of the way.
+Capybara is a great tool that gives us a nice DSL for interacting with DOM elements i.e finding, selecting, clicking, and filling in forms... you know, all things your users are going to be doing.  Luckily for us, the `cucumber-rails` gem that we installed already has `Capybara` built in.  First, let's get some configuration out of the way.
 
 Open the `env.rb` file inside of `support` directory.  Add the following to the top of the file.
 
@@ -50,9 +50,9 @@ Capybara.default_driver = :selenium
 
 ```
 The `Capybara.run_server = false` method tells Capybara that we are running aginst a remote server.
-The next 2 lines tell Capybara that we want to use the `Selenium Webdriver` and we want it to run `Chrome` as opposed to the default `firefox` (just my own personal preference)
+The next 2 lines tell Capybara that we want to use the `Selenium Webdriver` and we want it to run `Chrome` as opposed to the default `firefox` (just my own personal preference).
 
-Now, let's create a more robust smoketest.  Inside of the `features` directory make a new directory called `tests`.  Inside of that directory create a new `.feature` file called `smoketest.feature`.
+Now, let's create a more robust smoketest.  Inside of the `features` directory, make a new directory called `tests`.  Inside of that directory create a new `.feature` file called `smoketest.feature`.
 
 Add this to it:
 ```
@@ -97,7 +97,7 @@ Given(/^I am checking out many pages$/) do
 end
 ```
 
-Capybara gives us the method `visit` and all we do is pass it a url.  Now, we should be able to run `cucumber` and see the following:
+Capybara gives us the method `visit` and all we have to do is pass it a url.  Now, we should be able to run `cucumber` and see the following:
 
 ```
 Using the default profile...
@@ -148,18 +148,18 @@ end
 ```
 **Let's break this down**
 
-* Because of file loading issues, you need to require `sauce/cucumber` after `cucumber/rails`.
-* `Capybara.javascript_driver = :sauce` tells Capybara that any tests that need to be run with `javascript` should be handled by sauce.  What Sauce has done is any test tagged with `@selenium` will be run automatically on the Sauce OnDemand platform.
-* The `Sauce.config` block tells sauce what platform(Mac), what browser(Chrome), and what browser version(chrome doesn't have versions so you just put an empty string.  And yes, it has to be in an array of arrays!
+* Because of file loading issues, you *must* to require `sauce/cucumber` after `cucumber/rails`.
+* `Capybara.javascript_driver = :sauce` tells Capybara that any tests that need to be run with `javascript` should be handled by sauce.  What the `sauce-cucumber` gem does is make any test tagged with `@selenium` run automatically on the Sauce OnDemand platform.
+* The `Sauce.config` block tells the `sauce-cucumber` gem which platform (Mac), browser (Chrome) and browser version ("") to execute your test on.  Chrome doesn't have versions so you just put an empty string.  And yes, it has to be in an array of arrays!
 
-We now need to add our creditentials so SauceLabs knows who we are.  Inside of our `config` directory create a new `.yml` file called `ondemand.yml`.  The sauce gem is looking for this file.  Add the following:
+We now need to add our credentials so SauceLabs knows who we are.  Inside of our `config` directory create a new `.yml` file called `ondemand.yml`.  The sauce gem looks for this file.  Add the following:
 
 ```
 access_key: YOUR_ACCESS_KEY_HERE  
 username: YOUR_USERNAME_HERE
 ```
 
-Now, we need to go to the top of our `smoketest.feature` file and add the `@selenium` tag so we can indicate what tests we want run on Sauce OnDemand.  You file should look like this:
+Now, we need to tag our `smoketest.feature` file with the `@selenium` tag to indicate what tests we want run with Sauce OnDemand.  You file should look like this:
 
 ```
 @selenium
@@ -169,7 +169,7 @@ Feature: Testing different webpages
     Given I am checking out many pages
 ```
 
-Now, run `cucumber` from you command line and you should be running the test on SauceLabs.
+Now, run `cucumber` from your command line and you should be running the test on Sauce Labs.
 
 ##Phase 4: Parallelize the Test (part 1)
 
@@ -284,9 +284,9 @@ Great, now when we run `rake sauce:cucumber` our tests will run in 6 differnt br
 
 ##Phase 6: Running Against Localhost
 
-We have parallelized our test, but our one test is pretty lame.  It's an external process that just visits a few webpages.  When we're developing, we want to be able to test against our local environment.  Our current setup won't allow for that.  Luckily SauceLabs has again already done the hard work for us.  The have created `SauceConnect` which creates a tunnel between our local test environment and the VMs that are running our tests.
+We have parallelized our test, but our one test is pretty lame.  It's an external process that just visits a few webpages.  When we're developing, we want to be able to test against our local environment.  Our current setup won't allow for that.  Luckily Sauce Labs has again already done the hard work for us.  They've created [Sauce Connect](https://saucelabs.com/docs/connect) which creates a tunnel between our local test environment and the VMs that are running our tests.
 
-To get going, install the necessary gems
+To get going, install the necessary gem
 
 ```
 gem sauce-connect
@@ -298,7 +298,7 @@ Add some more config to our `env.rb` file
 Capybara.server_port = 80
 
 And this inside our Sauce.config block
-  c[:start_tunnel] = false
+  c[:start_tunnel] = true
 ```
 
 Our final `env.rb` file should look like this:
@@ -320,19 +320,20 @@ end
 ```
 
 **Breakdown**
-* `Capybara.server_port` is needed because Capybara runs its server on a random port, whereas SauceConnect is expecting a port from a specific range.  Port 80 is from that range.
-* `c[:start_tunnel] = true` Tells sauce that it should spin up the SauceConnect tunnel before the test is run.
+* `Capybara.server_port` is needed because Capybara runs its server on a random port, whereas Sauce Connect is expecting a port from a specific range.  Port 80 is from that range.  The full range can be found in the *Accessing applications on localhost* section of the [Sauce Connect documentation](https://saucelabs.com/docs/connect).
 
-Time to write a test.  At this point I cannot give you a sample because each of our dev env's will be different.  But, you should create a new `.feature` file within the `features/test` directory.  A quick smoketest could be to hit your landing page and click on some button, like `login`.  Remember to tag the test with `@selenium` so that sauce will pick it up.
+* `c[:start_tunnel] = true` Tells sauce that it should spin up the Sauce Connect tunnel before the test is run.
 
-Awesome Sauce - you should now be running against your dev env on sauce labs in 6 different browsers in parallel.
+Time to write a test.  At this point I cannot give you a sample because each of our applications will be different.  But, you should create a new `.feature` file within the `features/test` directory.  A quick smoketest could be to hit your landing page and click on some button, like `login`.  Remember to tag the test with `@selenium` so that the `sauce-connect gem` will pick it up.
+
+Awesome Sauce - you should now be running against your dev env on Sauce Labs in 6 different browsers in parallel.
 Woot Woot! Cut me another piece of parallel pie please.
 
 ##Additonal Notes
 
 **Run Sauce by Default**
 
-If you want to just run all of your tests against SauceLabs all the time change your `env.rb` file to look like this:
+If you want to just run all of your tests against Sauce Labs all the time change your `env.rb` file to look like this:
 ```
 require 'cucumber/rails'
 require "sauce/cucumber"
@@ -349,15 +350,15 @@ end
 
 **Long Running Sauce-Connect Tunnel**
 
-If you're using SauceConnect heavily, you'll want to make it so that you always have the tunnel running.  In our current implementation, the tunnel will get spun up and torn down between each test run.  This is *very* taxing as the tunnel takes between 10-20 seconds to spin up and 5-10 to close.  A better solution is to keep the tunnel running constantly in another thread.
+If you're using Sauce Connect heavily, you'll want to make it so that you always have the tunnel running.  In our current implementation, the tunnel will get spun up and torn down between each test run.  This is *very* taxing as the tunnel takes between 10-20 seconds to spin up and 5-10 to close.  A better solution is to keep the tunnel running constantly in another thread.
 
 **Manually**
 
-The easiest way to achieve that is to download the sauce-connect.jar file, add it into your app directory and then run it in another command line tab.  SauceLabs has put together an easy tutorial on how to downlaod and run [here](https://saucelabs.com/docs/connect "sauce-connect")
+The easiest way to achieve that is to download the sauce-connect.jar file, add it into your app directory and then run it in another command line tab.  Sauce Labs has put together an easy tutorial on how to downlaod and run [here](https://saucelabs.com/docs/connect "sauce-connect")
 
 **Progammatically**
 
-Or, you could create a SauceConnect class that deals with downloading, starting, and stopping the tunnel which you could then use as part of bootstrap script so you can run your tests with one command.
+Or, you could create a Sauce Connect class that deals with downloading, starting, and stopping the tunnel which you could then use as part of bootstrap script so you can run your tests with one command.
 
 Inside of your `support` directory create a new `.rb` file called `sauce_connect.rb`. Add the following:
 
@@ -490,7 +491,7 @@ SauceConnect.cleanup
 SauceConnect.start
 SauceConnect.end
 ```
-* `Download, Extract, Cleanup` will download the latest stable version from SauceLabs and install in our app's directory, unzip it, and then delete the original zip file so we only have the .jar file.
+* `Download, Extract, Cleanup` will download the latest stable version from Sauce Labs and install in our app's directory, unzip it, and then delete the original zip file so we only have the .jar file.
 * `Start` will start the tunnel in its own process so you don't need to open a second tab on the command line
 * `End` will find the process's pid and kill it (SIGTERM)
 
@@ -518,22 +519,4 @@ Now we can wrap each of these methods into its own `rake` task.  Add the followi
   end
 ```
 We can now call `rake sauce:install`, `rake sauce:open_tunnel`, `rake sauce:close_tunnel`
-Woot Woot! We now have 3 helpful `rake` tasks for dealing with SauceConnect Tunnel.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Woot Woot! We now have 3 helpful `rake` tasks for dealing with our Sauce Connect Tunnel.
