@@ -25,7 +25,7 @@ Now run the Cucumber generator
 rails generate cucumber:install
 ```
 
-It should have generated a `features` folder and created the `cucumber command`
+It should have generated a `features` folder and created the `cucumber` command.
 
 To make sure we're not crazy let's run `cucumber`. We should get the follow output:
 ```
